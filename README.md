@@ -1,5 +1,10 @@
 # 🎮 StreamRevenue - Twitch Creator Monetization Dashboard
 
+[![CI - StreamRevenue](https://github.com/nileshparmar0/streamrevenue/actions/workflows/ci.yml/badge.svg)](https://github.com/nileshparmar0/streamrevenue/actions/workflows/ci.yml)
+[![Tests](https://img.shields.io/badge/tests-17%20passing-brightgreen)](https://github.com/nileshparmar0/streamrevenue)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)](https://www.typescriptlang.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 A full-stack dashboard that helps Twitch creators track, analyze, and visualize their revenue from Subscriptions, Bits, and more — with **AI-powered revenue predictions**.
 
 ---
@@ -18,6 +23,7 @@ A full-stack dashboard that helps Twitch creators track, analyze, and visualize 
 | 🔔 **Real-time Alerts** | Live notifications for new subs, bits & follows via EventSub |
 | 💾 **Data Persistence** | PostgreSQL database for historical tracking |
 | 🐳 **Docker Compose** | One-command infrastructure setup |
+| 🧪 **CI/CD Pipeline** | GitHub Actions with automated testing |
 
 ---
 
@@ -62,9 +68,11 @@ The dashboard uses **machine learning** to forecast future revenue:
 - **PostgreSQL** for data persistence
 - **Redis** for high-performance caching
 - **simple-statistics** for ML predictions
+- **Jest** for unit testing (17 tests)
 
 ### DevOps
 - **Docker Compose** for PostgreSQL & Redis
+- **GitHub Actions** for CI/CD pipeline
 - **Environment-based configuration**
 
 ---
@@ -85,6 +93,33 @@ The dashboard uses **machine learning** to forecast future revenue:
 | `/api/revenue/subscribers` | 120s | Subscriber data changes less frequently |
 | `/api/revenue/predictions` | 600s | ML predictions are computationally expensive |
 | `/api/revenue/channel` | 300s | Channel info rarely changes |
+
+---
+
+## 🧪 Testing
+
+Run the test suite:
+
+```bash
+cd server
+npm test
+```
+
+```
+ PASS  src/__tests__/predictions.test.ts
+ PASS  src/__tests__/api.test.ts
+
+Test Suites: 2 passed, 2 total
+Tests:       17 passed, 17 total
+```
+
+### Test Coverage
+
+| Module | Tests | Coverage |
+|--------|-------|----------|
+| ML Predictions | 6 | Trend detection, forecasting, confidence |
+| API Endpoints | 5 | Health, auth, rates, revenue |
+| Revenue Calculations | 6 | Subscription tiers, bits |
 
 ---
 
@@ -164,12 +199,15 @@ Navigate to `http://localhost:3000` and click **"Login with Twitch"**
 
 ```
 streamrevenue/
+├── .github/
+│   └── workflows/
+│       └── ci.yml               # 🆕 GitHub Actions CI/CD
 ├── docker-compose.yml           # PostgreSQL + Redis
 ├── client/                      # React Frontend
 │   ├── src/
 │   │   ├── components/
 │   │   │   ├── Dashboard.tsx    # Main dashboard
-│   │   │   ├── RevenuePredictions.tsx  # 🆕 AI predictions
+│   │   │   ├── RevenuePredictions.tsx  # AI predictions
 │   │   │   ├── RevenueCard.tsx
 │   │   │   ├── SubscriberChart.tsx
 │   │   │   ├── BitsLeaderboard.tsx
@@ -183,6 +221,9 @@ streamrevenue/
 │
 ├── server/                      # Node.js Backend
 │   ├── src/
+│   │   ├── __tests__/           # 🆕 Jest test suites
+│   │   │   ├── predictions.test.ts
+│   │   │   └── api.test.ts
 │   │   ├── routes/
 │   │   │   ├── auth.ts
 │   │   │   ├── revenue.ts       # Includes /predictions endpoint
@@ -191,11 +232,12 @@ streamrevenue/
 │   │   │   ├── twitchApi.ts
 │   │   │   ├── revenueCalculator.ts
 │   │   │   ├── database.ts
-│   │   │   ├── redis.ts         # 🆕 Cache service
-│   │   │   ├── predictions.ts   # 🆕 ML predictions
+│   │   │   ├── redis.ts         # Cache service
+│   │   │   ├── predictions.ts   # ML predictions
 │   │   │   └── eventSub.ts
 │   │   └── middleware/
 │   │       └── authMiddleware.ts
+│   ├── jest.config.js           # 🆕 Jest configuration
 │   └── package.json
 │
 └── README.md
@@ -221,9 +263,9 @@ streamrevenue/
 | GET | `/api/revenue/bits` | Bits leaderboard | 60s |
 | GET | `/api/revenue/trends` | Historical trends | 60s |
 | GET | `/api/revenue/history` | Revenue history | 60s |
-| GET | `/api/revenue/predictions` | 🆕 AI revenue forecast | 600s |
+| GET | `/api/revenue/predictions` | AI revenue forecast | 600s |
 | GET | `/api/revenue/channel` | Channel info | 300s |
-| POST | `/api/revenue/cache/clear` | 🆕 Clear user cache | - |
+| POST | `/api/revenue/cache/clear` | Clear user cache | - |
 
 ### Events (Real-time)
 | Method | Endpoint | Description |
@@ -345,6 +387,7 @@ Building this project demonstrates:
 - **Third-party API Integration** - Twitch Helix API
 - **Data Visualization** - Interactive charts with Recharts
 - **DevOps** - Docker Compose for infrastructure
+- **CI/CD** - GitHub Actions for automated testing
 
 ---
 
@@ -352,6 +395,8 @@ Building this project demonstrates:
 
 - [x] ~~Redis caching for API responses~~
 - [x] ~~Revenue projections with ML~~
+- [x] ~~Jest unit tests~~
+- [x] ~~GitHub Actions CI/CD~~
 - [ ] Export reports (CSV/PDF)
 - [ ] Multi-channel comparison
 - [ ] Goal tracking ("50/100 subs to $500")
