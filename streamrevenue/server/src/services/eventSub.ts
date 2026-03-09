@@ -152,7 +152,7 @@ class EventSubService {
           console.log(`✅ Subscribed to ${sub.type}`);
         } else {
           const error = await response.json();
-          console.log(`⚠️ Failed to subscribe to ${sub.type}:`, error.message || response.status);
+          console.log(`⚠️ Failed to subscribe to ${sub.type}:`, (error as Error).message || response.status);
         }
       } catch (error) {
         console.error(`❌ Error subscribing to ${sub.type}:`, error);
