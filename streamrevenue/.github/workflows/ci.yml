@@ -1,0 +1,93 @@
+name: CI - StreamRevenue
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_USER: admin
+          POSTGRES_PASSWORD: admin123
+          POSTGRES_DB: streamrevenue
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: server/package-lock.json
+
+      - name: 📦 Install server dependencies
+        working-directory: ./server
+        run: npm ci
+
+      - name: 🧪 Run tests
+        working-directory: ./server
+        env:
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_NAME: streamrevenue
+          DB_USER: admin
+          DB_PASSWORD: admin123
+          REDIS_HOST: localhost
+          REDIS_PORT: 6379
+        run: npm test
+
+      - name: ✅ Tests passed
+        run: echo "All tests passed! 🎉"
+
+  lint:
+    name: Type Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: server/package-lock.json
+
+      - name: 📦 Install server dependencies
+        working-directory: ./server
+        run: npm ci
+
+      - name: 🔍 TypeScript check
+        working-directory: ./server
+        run: npx tsc --noEmit
+
+      - name: ✅ Type check passed
+        run: echo "No TypeScript errors! 🎉"
