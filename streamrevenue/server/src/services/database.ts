@@ -1,28 +1,38 @@
 import { Pool } from 'pg';
 
-// Database connection pool
-const pool = new Pool({
-  host: 'localhost',
-  port: 5433,  // Changed from 5432 to 5433
-  database: 'streamrevenue',
-  user: 'nilesh',  // Changed from admin
-  password: 'nilesh123',  // Changed from admin123
-});
+// Lazy pool initialization - only created when first used
+let pool: Pool | null = null;
 
-console.log('✅ Connecting to database...');
+function getPool(): Pool {
+  if (!pool) {
+    console.log('✅ Connecting to database...');
+    console.log(`   DB_HOST: ${process.env.DB_HOST}`);
+    console.log(`   DB_PORT: ${process.env.DB_PORT}`);
+    console.log(`   DB_NAME: ${process.env.DB_NAME}`);
+    console.log(`   DB_USER: ${process.env.DB_USER}`);
+    
+    pool = new Pool({
+      host: process.env.DB_HOST || 'localhost',
+      port: parseInt(process.env.DB_PORT || '5432'),
+      database: process.env.DB_NAME || 'streamrevenue',
+      user: process.env.DB_USER || 'admin',
+      password: process.env.DB_PASSWORD || 'admin123',
+    });
 
-// Test connection
-pool.on('connect', () => {
-  console.log('✅ Connected to PostgreSQL database');
-});
+    pool.on('connect', () => {
+      console.log('✅ Connected to PostgreSQL database');
+    });
 
-pool.on('error', (err) => {
-  console.error('❌ Database connection error:', err);
-});
+    pool.on('error', (err) => {
+      console.error('❌ Database connection error:', err);
+    });
+  }
+  return pool;
+}
 
 // Initialize tables
 export async function initializeDatabase(): Promise<void> {
-  const client = await pool.connect();
+  const client = await getPool().connect();
   
   try {
     // Create users table (store Twitch user info)
@@ -76,7 +86,7 @@ export async function initializeDatabase(): Promise<void> {
 
 // Query helper functions
 export async function query(text: string, params?: any[]) {
-  const result = await pool.query(text, params);
+  const result = await getPool().query(text, params);
   return result;
 }
 
@@ -170,4 +180,4 @@ export async function getRevenueTrends(userId: string, days: number = 30) {
   return result.rows;
 }
 
-export default pool;
+export default { query, getPool };

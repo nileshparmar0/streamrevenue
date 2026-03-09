@@ -1,15 +1,14 @@
+// Load environment variables FIRST - before any other imports
+import dotenv from 'dotenv';
+dotenv.config();
+
 import express from 'express';
 import cors from 'cors';
 import session from 'express-session';
-import dotenv from 'dotenv';
 import authRoutes from './routes/auth';
 import revenueRoutes from './routes/revenue';
 import eventsRoutes from './routes/events';
 import { initializeDatabase } from './services/database';
-
-
-// Load environment variables
-dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -19,7 +18,6 @@ app.use(cors({
   origin: process.env.CLIENT_URL || 'http://localhost:3000',
   credentials: true
 }));
-
 app.use(express.json());
 
 // Session configuration
@@ -79,7 +77,6 @@ app.listen(PORT, async () => {
   Port: ${PORT}
   Environment: ${process.env.NODE_ENV || 'development'}
   Client URL: ${process.env.CLIENT_URL || 'http://localhost:3000'}
-  
   Endpoints:
   - GET  /health          - Health check
   - GET  /auth/login      - Start Twitch OAuth

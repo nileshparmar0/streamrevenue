@@ -4,6 +4,7 @@ import RevenueCard from './RevenueCard';
 import SubscriberChart from './SubscriberChart';
 import BitsLeaderboard from './BitsLeaderboard';
 import RevenueTrendsChart from './RevenueTrendsChart';
+import RevenuePredictions from './RevenuePredictions';
 import LiveAlerts from './LiveAlerts';
 
 const Dashboard: React.FC = () => {
@@ -110,6 +111,9 @@ const Dashboard: React.FC = () => {
         />
       </div>
 
+      {/* AI Revenue Predictions - NEW! */}
+      <RevenuePredictions />
+
       {/* Revenue Trends Chart */}
       <RevenueTrendsChart />
 
@@ -155,8 +159,8 @@ const Dashboard: React.FC = () => {
       {/* Disclaimer */}
       <div className="disclaimer">
         <p>
-          <strong>Note:</strong> Revenue calculations are estimates based on standard Twitch payout rates 
-          (50% for subscriptions, $0.01 per bit). Actual earnings may vary based on your contract terms, 
+          <strong>Note:</strong> Revenue calculations are estimates based on standard Twitch payout rates
+          (50% for subscriptions, $0.01 per bit). Actual earnings may vary based on your contract terms,
           regional factors, and Twitch's current policies.
         </p>
       </div>
